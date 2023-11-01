@@ -143,7 +143,7 @@ function Get-FOPackagesDir
 {
 	<#
 	.SYNOPSIS
-	Tries to find the location of F&P model store (PackagesLocalDirectory).
+	Tries to find the location of F&O model store (PackagesLocalDirectory).
 	#>
 	
 	if ($PackageDir -and (Test-Path -Path $PackageDir))
@@ -151,16 +151,15 @@ function Get-FOPackagesDir
 		return $PackageDir
 	}
 
-    if (Test-Path -Path K:\AosService)
-    {
-		return "K:\AosService\PackagesLocalDirectory"
-    }
-    elseif (Test-Path -Path C:\AosService)
-    {
-		return "C:\AosService\PackagesLocalDirectory"
-    }
-    else
-    {
-		throw "Cannot find PackagesLocalDirectory. Specify the path in $($configFile.FullName)."
-    }
+	foreach ($drive in (Get-Volume | where OperationalStatus -eq OK | where DriveLetter -ne $null | select -Expand DriveLetter))
+	{
+		$path = "${drive}:\AosService\PackagesLocalDirectory"
+		
+		if (Test-Path -Path $path)
+		{
+			return $path
+		}
+	}
+
+	throw "Cannot find PackagesLocalDirectory. Specify the path in $($configFile.FullName)."
 }
