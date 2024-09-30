@@ -54,7 +54,7 @@ function Switch-FOWorkspace
 	# Switch the default path for new projects in Visual Studio
 	if ($switchVsDefaultProjectsPath)
 	{
-		$versionNum = if ($VSVersion -eq "2017") {'15'} else {"16"}
+		$versionNum = if ($VSVersion -eq "2019") {'16'} else {"17"}
 		$settingsFilePattern = "$($env:LocalAppData)\Microsoft\VisualStudio\$versionNum*\Settings\CurrentSettings.vssettings"
 		
 		$settingsFile = Get-ChildItem $settingsFilePattern | Select-Object -First 1

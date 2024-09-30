@@ -1,2 +1,2 @@
 $PackageDir = 'c:\AosService\PackagesLocalDirectory'
-$VSVersion = '2019'
+$VSVersion = '2022'
