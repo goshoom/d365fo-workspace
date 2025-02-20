@@ -85,7 +85,17 @@ function Get-FOWorkspace
 	Shows the model store folder currently used by F&O.
 	#>
 	
-	(Get-D365EnvironmentSettings).Aos.MetadataDirectory
+    foreach ($drive in (Get-Volume | where OperationalStatus -eq OK | where DriveLetter -ne $null | select -Expand DriveLetter))
+	{
+		$path = "${drive}:\AosService\WebRoot\web.config"
+		
+		if (Test-Path -Path $path)
+		{
+			[xml]$webConfig = Get-Content $path
+            $appSettings = $webConfig.configuration.appSettings
+	        $appSettings.SelectSingleNode("add[@key='Aos.MetadataDirectory']").Value
+		}
+	}
 }
 
 function Add-FOPackageSymLinks
