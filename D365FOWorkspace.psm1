@@ -55,9 +55,18 @@ function Switch-FOWorkspace
 	if ($switchVsDefaultProjectsPath)
 	{
 		$versionNum = if ($VSVersion -eq "2019") {'16'} else {"17"}
-		$settingsFilePattern = "$($env:LocalAppData)\Microsoft\VisualStudio\$versionNum*\Settings\CurrentSettings.vssettings"
-		
+		$settingsDirPattern = "$($env:LocalAppData)\Microsoft\VisualStudio\$versionNum*\Settings"
+
+		$settingsFilePattern = "$settingsDirPattern\CurrentSettings.vssettings"
 		$settingsFile = Get-ChildItem $settingsFilePattern | Select-Object -First 1
+
+		if (!$settingsFile)
+		{
+			# Covers names like CurrentSettings-2025-01-15.vssettings
+			$settingsFilePattern = "$settingsDirPattern\CurrentSettings*.vssettings"
+			$settingsFile = Get-ChildItem $settingsFilePattern | Sort-Object Name -Descending | Select-Object -First 1
+		}
+
 		if ($settingsFile)
 		{
 			[xml]$vsConfigXml = Get-Content $settingsFile
